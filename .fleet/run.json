@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "python",
+            "name": "Start application",
+            "arguments": [
+                "src/main.py"
+            ],
+        },
+
+    ]
+}
