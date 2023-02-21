@@ -32,7 +32,7 @@ class Templates:
 
             syntax = Syntax(str(data), "auto")
 
-            console.print("[bold red]REQUEST:[/bold red]")
+            console.print(f"[bold red]REQUEST ({request.method}):[/bold red]")
             console.print("BODY:",syntax)
 
             if not (set(("hook","action","function","params")) <= data.keys()):
@@ -69,7 +69,7 @@ class Service:
         """
         Generate route based on template
         """
-        self.app.route(route_name)(template)
+        self.app.route(route_name, methods = ['POST'])(template)
 
     def serve(
         self,
