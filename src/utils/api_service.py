@@ -5,6 +5,7 @@ from rich.console import Console
 from rich.syntax import Syntax
 import traceback
 import sys, os
+import inspect
 
 console = Console()
 
@@ -45,14 +46,34 @@ class Templates:
                     try:
                         resp = cogs_data[data['action']](data['params'])
                     except Exception as e:
-                        traceback_str = ''.join(traceback.format_tb(e.__traceback__))
+                        ex_type, ex_value, ex_traceback = sys.exc_info()
+                        trace = []
+                        tb = e.__traceback__
+                        
+                        while tb is not None:
+                            trace.append({
+                                "filename": tb.tb_frame.f_code.co_filename,
+                                "name": tb.tb_frame.f_code.co_name,
+                                "lineno": tb.tb_lineno
+                            })
+                            tb = tb.tb_next
+                        
+                        lines = cogs_data[data['action']]._code
+                        line = lines.split('\n')[trace[1]['lineno']-2]
+
+                        traceback_str = "Cog Trace: \n"\
+                            + f"\nAction: {trace[1]['name']}"\
+                            + f"\nException: {e}"\
+                            + f"\nType: {ex_type}"\
+                            + f"\nLine: {trace[1]['lineno']} -> {line}"\
+
                         return traceback_str
                     console.print("[bold red]RESPONSE:[/bold red]", resp)
                     return resp
                 else:
                     return "Unable to locate function"
             else:
-                return f"No such cog: {cog_name}"
+                return f"No such cog: {data['hook']}. Cog present: {cog_name}"
 
         return _internal
 

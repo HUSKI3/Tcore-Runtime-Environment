@@ -28,7 +28,8 @@ if __name__ == "__main__":
     system = init.Init(
         args.cog_path,
         args.version,
-        args.pre
+        args.pre,
+        not args.interactive
     )
 
     if args.interactive:

@@ -1,4 +1,7 @@
 """ Entire file is an entry point """
-from os import listdir, getcwd
+from os import li
+stdir, getcwd
 
-return listdir(getcwd())
+
+
+return 2 / 0

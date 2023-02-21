@@ -41,20 +41,33 @@ def stop_thread(thread):
 
 import types
 
+wrap = '''\
+{code}
+try:
+    {name}()
+except Exception as e:
+    print(e)
+'''
+
 func_template = '''\
 def {name}(args):
 {body}
-{name}()\
 '''
 
 def build(name, code, local={}):
     builtins = {
         "returner":""
     }
-    code_obj = compile(func_template.format(
-            name = name,
-            body = indent(code, 1)
-        ),
+    final_string = wrap.format(
+            code = 
+            func_template.format(
+                name = name,
+                body = indent(code, 1)
+            ),
+            name = name
+        )
+    code_obj = compile(
+        final_string,
         '<string>',
         'exec'
     )

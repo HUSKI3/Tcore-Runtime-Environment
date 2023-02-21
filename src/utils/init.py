@@ -10,6 +10,9 @@ from rich import print as pprint
 from rich.progress import Progress, wrap_file
 import yaml
 
+from .api_service import Service, Templates
+from .watch import Nelka, EventHandler
+
 def print(*args, **kwargs):
     pprint(f"[bold green]Init -> {' '.join([str(_) for _ in args])} [/bold green]",**kwargs)
 
@@ -56,7 +59,8 @@ class Init:
         self,
         cog_path: str,
         version: str,
-        preprocessor: str
+        preprocessor: str,
+        service: bool
     ) -> None:
         print("Preparing runtime environment")
 
@@ -75,6 +79,19 @@ class Init:
         if not path.exists("./src/resources/runtime.py"):
             self.env: Resolve = self.resolve_version(version)
         self.preprocessor = preprocessor
+
+        # Start watching
+        watch = Nelka(
+            event_handler= EventHandler(
+                on_modified= self.set_routes
+            ),
+            track_only= [cog_path]
+        )
+
+        watch.start()
+
+        if service:
+            self.service = Service()
 
     def check_directories(self):
         EMULATED = path.join(getenv('HOME'), ".tcore_emulated")
@@ -217,26 +234,28 @@ Farewell! Stopping runtime..."""
                 action,
                 open(action_file).read()
             )
+            function_object._code = open(action_file).read()
             function_objects.append(function_object)
         return [function_objects, cog_name]
+
+    def set_routes(self, _event = None):
+        function_objects, cog_name = self.get_actions()
+        final = Templates.FakeAsgard(cog_name, function_objects, self.safespace)
+        self.service.generate_route(
+            final
+        )
 
     def run_session(
         self
     ):
-        from .api_service import Service, Templates
 
-        service = Service()
-
-        function_objects, cog_name = self.get_actions()
-
-        final = Templates.FakeAsgard(cog_name, function_objects, self.safespace)
-        service.generate_route(
-            final
-        )
 
         print("Generated asgard route 👍")
+
+        self.set_routes()
 
         import logging
         log = logging.getLogger('werkzeug')
         log.setLevel(logging.ERROR)
-        service.serve()
+        self.service.serve()
+        
