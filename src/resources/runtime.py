@@ -54,6 +54,10 @@ def {name}(args):
 {body}
 '''
 
+def getConstants(function):
+    f_code = function.__code__
+    return f_code.co_consts
+
 def build(name, code, local={}):
     builtins = {
         "returner":""
@@ -71,7 +75,7 @@ def build(name, code, local={}):
         '<string>',
         'exec'
     )
-    func_typed = types.FunctionType(code_obj.co_consts[0], {**builtins, **globals()})
+    func_typed = types.FunctionType(code_obj.co_consts[0], {**builtins, **globals(), **local})
     return func_typed
 
 def text_thread_run(name, code, args, return_store):

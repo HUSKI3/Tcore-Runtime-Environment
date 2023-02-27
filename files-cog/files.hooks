@@ -5,5 +5,7 @@ hook:
   actions:
       read_files:
         "read_files"
+      a:
+        "a"
 config:
   example_api_url: ""

@@ -225,17 +225,24 @@ Farewell! Stopping runtime..."""
 
         function_objects: list[function] = []
 
+        referenceHolder = Resolve()
+
         for action in actions:
             action_file = path.join(self.cog_path, source_path, actions[action]+".py")
 
             # Construct function object
             from resources import runtime
+            
             function_object = runtime.build(
                 action,
-                open(action_file).read()
+                open(action_file).read(),
+                local = {"reference": referenceHolder}
             )
+            
             function_object._code = open(action_file).read()
             function_objects.append(function_object)
+            referenceHolder[function_object.__name__] = function_object
+        
         return [function_objects, cog_name]
 
     def set_routes(self, _event = None):
