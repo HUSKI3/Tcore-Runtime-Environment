@@ -34,7 +34,7 @@ if __name__ == "__main__":
     )
 
     if args.headless_init:
-        print("Complete init!")
+        print("Completed init!")
         quit(0)
 
     elif args.cog_path is None:
