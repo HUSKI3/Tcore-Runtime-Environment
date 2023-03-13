@@ -1,5 +1,5 @@
 ## Utils ##
-from utils import init
+from utils.init import Init
 
 ## Print ##
 from rich import print as pprint
@@ -17,7 +17,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('cog_path')
 parser.add_argument('--version', default="1") # 0 indicates latest
-parser.add_argument('--pre', default="0")     # 0 indicates latest
+parser.add_argument('--pre', default=None)    # None indicates none
 parser.add_argument('--interactive',
                        action='store_true',
                        help='launches interactive shell')
@@ -25,7 +25,7 @@ parser.add_argument('--interactive',
 if __name__ == "__main__":
     args = parser.parse_args()
     # Create run-time
-    system = init.Init(
+    system = Init(
         args.cog_path,
         args.version,
         args.pre,

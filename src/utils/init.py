@@ -13,8 +13,8 @@ import yaml
 from .api_service import Service, Templates
 from .watch import Nelka, EventHandler
 
-def print(*args, **kwargs):
-    pprint(f"[bold green]Init -> {' '.join([str(_) for _ in args])} [/bold green]",**kwargs)
+def print(*args, color="green"):
+    pprint(f"[bold {color}]Init -> {' '.join([str(_) for _ in args])} [/bold {color}]")
 
 ## *&*(-all object
 class Resolve(object):
@@ -89,6 +89,22 @@ class Init:
         )
 
         watch.start()
+
+        if preprocessor:
+            if "mypy" == preprocessor:
+                print(f"Preprocessing {cog_path} using {preprocessor}")
+                from mypy import api
+                x = api.run(
+                    [cog_path]
+                )
+
+                success = x[-1]
+                if success != 0:
+                    print(f"Failed to preprocess {cog_path} using {preprocessor}\n{x[0]}", color="red")
+                    quit()
+                else:
+                    print(x)
+            quit()
 
         if service:
             self.service = Service()

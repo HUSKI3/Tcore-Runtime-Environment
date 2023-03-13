@@ -1,4 +1,6 @@
 """ Entire file is an entry point """
 from os import listdir, getcwd
 
-return "4"
+x: int = 10
+
+return "4" # type: ignore
